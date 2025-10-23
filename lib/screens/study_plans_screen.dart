@@ -1,7 +1,7 @@
 ﻿import 'package:flutter/material.dart';
 
 class StudyPlansScreen extends StatelessWidget {
-  const StudyPlansScreen({Key? key}) : super(key: key);
+  const StudyPlansScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

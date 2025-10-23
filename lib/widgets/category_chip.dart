@@ -1,12 +1,10 @@
 ﻿import 'package:flutter/material.dart';
 
 class CategoryChip extends StatelessWidget {
-  const CategoryChip({Key? key}) : super(key: key);
+  const CategoryChip({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Chip(
-      label: const Text('Category'),
-    );
+    return Chip(label: const Text('Category'));
   }
 }
