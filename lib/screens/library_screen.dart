@@ -11,53 +11,52 @@ class LibraryScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 💡 الحصول على الـ Provider دون الاستماع للتغييرات
     final bookProvider = Provider.of<BookProvider>(context, listen: false);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('المصنفات'), centerTitle: true),
-      // 💡 نستخدم FutureBuilder لتشغيل عملية جلب التصنيفات
+      appBar: AppBar(title: const Text('المصنفات')),
       body: FutureBuilder<List<String>>(
-        // تشغيل دالة جلب التصنيفات التي قد تحتاج لتحميل الكتب أولاً
         future: bookProvider.getUniqueCategories(),
 
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            // حالة التحميل الأولي
             return const Center(child: CircularProgressIndicator());
-          }
-
-          if (snapshot.hasError) {
-            // حالة وجود خطأ في جلب البيانات
+          } else if (snapshot.hasError) {
             return Center(
               child: Text('حدث خطأ أثناء جلب المصنفات: ${snapshot.error}'),
             );
-          }
-
-          if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            // حالة عدم وجود بيانات
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
             return const Center(child: Text('عفواً، لا توجد مصنفات متاحة.'));
           }
 
           final categories = snapshot.data!;
           return ListView.builder(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(12.0),
             itemCount: categories.length,
             itemBuilder: (context, index) {
               final category = categories[index];
               return Card(
-                elevation: 2,
-                margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                elevation: 4, // 💡 رفع مستوى الظل
+                margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
                 child: ListTile(
-                  leading: const Icon(Icons.folder, color: Colors.teal),
+                  contentPadding: const EdgeInsets.symmetric(
+                    vertical: 8,
+                    horizontal: 16,
+                  ),
+                  leading: const Icon(
+                    Icons.folder_special,
+                    color: Color(0xFF4DB6AC),
+                    size: 30,
+                  ), // لون أيقونة مميز
                   title: Text(
                     category,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 17,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 18,
+                      color: Theme.of(context).primaryColor, // لون النص الأساسي
                     ),
                   ),
-                  trailing: const Icon(Icons.arrow_forward_ios),
+                  trailing: const Icon(Icons.chevron_right, color: Colors.grey),
                   onTap: () {
                     Navigator.push(
                       context,

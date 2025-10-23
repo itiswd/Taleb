@@ -14,7 +14,7 @@ class BookProvider with ChangeNotifier {
   bool get isLoading => _isLoading;
 
   BookProvider() {
-    fetchBooks();
+    // 💡 تم حذف fetchBooks(); لمنع خطأ setState() during build
   }
 
   Future<void> fetchBooks() async {
@@ -35,9 +35,15 @@ class BookProvider with ChangeNotifier {
   // دالة لجلب تصنيفات الكتب الفريدة
   Future<List<String>> getUniqueCategories() async {
     if (_books.isEmpty) {
-      await fetchBooks();
+      // 💡 لا تستدعي fetchBooks() هنا، بل اعتمد على main.dart لتحميلها مرة واحدة
+      // في هذه الحالة، سنعتمد على أن main.dart قام بالتحميل.
+      // إذا لم يكن التحميل قد اكتمل بعد (رغم محاولة main.dart)،
+      // سنعيد المحاولة هنا أو ننتظر حتى تكتمل قائمة الكتب.
+      // لأغراض التصحيح: سنقوم بالجلب مباشرة من قاعدة البيانات إذا كانت القائمة فارغة
+      _books = await _dbHelper.getAllBooks();
     }
-    // 💡 فلترة وإزالة المكرر وعرضها كقائمة
+
+    // فلترة وإزالة المكرر
     return _books.map((e) => e.category).toSet().toList();
   }
 

@@ -8,43 +8,92 @@ import 'providers/book_provider.dart';
 import 'screens/library_screen.dart';
 
 void main() {
-  // التأكد من تهيئة Flutter قبل تشغيل التطبيق
   WidgetsFlutterBinding.ensureInitialized();
+
+  final bookProvider = BookProvider();
+
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    bookProvider.fetchBooks();
+  });
+
   runApp(
-    ChangeNotifierProvider(
-      create: (context) => BookProvider(), // ⬅️ فقط BookProvider
-      child: const Taleb(),
+    ChangeNotifierProvider.value(
+      value: bookProvider,
+      child: const TalibAlmApp(),
     ),
   );
 }
 
-class Taleb extends StatelessWidget {
-  const Taleb({super.key});
+class TalibAlmApp extends StatelessWidget {
+  const TalibAlmApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'مكتبة طالب العلم PDF',
       debugShowCheckedModeBanner: false,
-      // دعم اللغة العربية
+
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      supportedLocales: const [
-        Locale('ar', ''), // Arabic
-      ],
+      supportedLocales: const [Locale('ar', '')],
       locale: const Locale('ar', ''),
+
+      // 💡 التعديلات الرئيسية على الثيم
       theme: ThemeData(
-        primarySwatch: Colors.teal,
-        appBarTheme: const AppBarTheme(centerTitle: true),
+        // الألوان
+        primaryColor: const Color(0xFF004D40), // أخضر داكن (Dark Teal)
+        colorScheme:
+            ColorScheme.fromSwatch(
+              primarySwatch: Colors.teal, // اللون الأساسي
+            ).copyWith(
+              secondary: const Color(0xFF4DB6AC), // لون التمييز
+              surface: const Color(0xFFF9F9F9), // خلفية فاتحة ومريحة
+            ),
+
+        // الخطوط (Cairo هو الخط الافتراضي لكل النصوص)
+        fontFamily: 'Cairo',
         textTheme: const TextTheme(
-          bodyLarge: TextStyle(fontFamily: 'Cairo'), // يمكنك تغيير الخط هنا
-          bodyMedium: TextStyle(fontFamily: 'Cairo'),
+          // ضبط الأحجام الافتراضية للخطوط
+          titleLarge: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+          bodyMedium: TextStyle(fontSize: 16),
+          bodyLarge: TextStyle(fontSize: 18),
+        ),
+
+        // شريط التطبيق (AppBar)
+        appBarTheme: AppBarTheme(
+          centerTitle: true,
+          backgroundColor: const Color(0xFF004D40), // لون شريط التطبيق
+          foregroundColor: Colors.white,
+          titleTextStyle: const TextStyle(
+            fontFamily: 'Cairo',
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+
+        // الأزرار المرتفعة (ElevatedButton)
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFF004D40), // لون الزر
+            foregroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+          ),
+        ),
+
+        // البطاقات (Cards)
+        cardTheme: CardThemeData(
+          elevation: 4,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
         ),
       ),
-      home: const LibraryScreen(), // ⬅️ شاشة المكتبة هي الشاشة الرئيسية
+      home: const LibraryScreen(),
     );
   }
 }

@@ -12,11 +12,11 @@ import '../models/book.dart';
 class DbHelper {
   static Database? _database;
   static const String dbName = 'talib_ilm.db';
-  static const int dbVersion = 8; // ⬅️ الإصدار الجديد لضمان إعادة البناء
+  static const int dbVersion = 8; // ⬅️ الإصدار الحالي (تم حذف الفصول والخطط)
 
   // أسماء الجداول
   static const String bookTable = 'books';
-  // ❌ حذف: chapterTable, planTable, planItemTable
+  // ❌ تم حذف: chapterTable, planTable, planItemTable
 
   // دالة للحصول على نسخة من قاعدة البيانات
   Future<Database> get database async {
@@ -25,6 +25,7 @@ class DbHelper {
     return _database!;
   }
 
+  // دالة لتهيئة (إنشاء) قاعدة البيانات
   Future<Database> _initDB() async {
     String path = join(await getDatabasesPath(), dbName);
 
@@ -44,8 +45,6 @@ class DbHelper {
       )
     ''');
 
-    // ❌ حذف: إنشاء جداول الفصول والخطط
-
     await _insertInitialData(db);
   }
 
@@ -54,6 +53,7 @@ class DbHelper {
     debugPrint('--- بدء إدخال بيانات PDF الأولية من JSON ---');
 
     try {
+      // 💡 المسار المُصحّح لملف البيانات
       final String response = await rootBundle.loadString(
         'assets/pdfs/books_data.json',
       );
@@ -79,13 +79,14 @@ class DbHelper {
         });
         debugPrint('تم إدخال الكتاب: ${bookMap['title']}');
       }
+      debugPrint('--- انتهاء إدخال البيانات الأولية بنجاح ---');
     } catch (e) {
       debugPrint('خطأ فادح في إدخال البيانات الأولية (تحقق من JSON): $e');
     }
   }
 
   // ---------------------------------------------
-  // دوال جلب البيانات (الأساسية)
+  // دوال جلب البيانات
   // ---------------------------------------------
 
   // دالة لجلب كل الكتب
@@ -95,7 +96,7 @@ class DbHelper {
     return List.generate(maps.length, (i) => Book.fromMap(maps[i]));
   }
 
-  // دالة لجلب الكتب حسب التصنيف (المصنفات)
+  // دالة لجلب الكتب حسب التصنيف
   Future<List<Book>> getBooksByCategory(String category) async {
     final db = await database;
     final List<Map<String, dynamic>> maps = await db.query(

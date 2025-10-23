@@ -17,7 +17,7 @@ class CategoryBooksScreen extends StatelessWidget {
     final bookProvider = Provider.of<BookProvider>(context, listen: false);
 
     return Scaffold(
-      appBar: AppBar(title: Text('مصنف: $category'), centerTitle: true),
+      appBar: AppBar(title: Text('مصنف: $category')),
       body: FutureBuilder<List<Book>>(
         future: bookProvider.filterBooksByCategory(category),
         builder: (context, snapshot) {
@@ -31,21 +31,35 @@ class CategoryBooksScreen extends StatelessWidget {
 
           final books = snapshot.data!;
           return ListView.builder(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(12.0),
             itemCount: books.length,
             itemBuilder: (context, index) {
               final book = books[index];
               return Card(
-                elevation: 2,
-                margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+                elevation: 4,
+                margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
                 child: ListTile(
-                  leading: const Icon(Icons.picture_as_pdf, color: Colors.red),
+                  contentPadding: const EdgeInsets.all(12),
+                  leading: Icon(
+                    Icons.menu_book,
+                    color: Theme.of(context).primaryColor,
+                    size: 30,
+                  ),
                   title: Text(
                     book.title,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 17,
+                    ),
                   ),
-                  subtitle: Text('المؤلف: ${book.author}'),
-                  trailing: const Icon(Icons.arrow_forward_ios),
+                  subtitle: Padding(
+                    padding: const EdgeInsets.only(top: 4.0),
+                    child: Text(
+                      'المؤلف: ${book.author}',
+                      style: const TextStyle(fontSize: 14, color: Colors.grey),
+                    ),
+                  ),
+                  trailing: const Icon(Icons.chevron_right),
                   onTap: () {
                     // الانتقال مباشرة لعارض PDF
                     Navigator.push(

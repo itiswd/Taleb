@@ -88,6 +88,7 @@ flutter:
     - assets/pdfs/السيرة النبوية/
     - assets/pdfs/العقيدة والتوحيد/
     - assets/pdfs/الفقه/
+    - assets/pdfs/اللغة العربية/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
@@ -106,11 +107,7 @@ flutter:
         - asset: assets/fonts/Cairo-Regular.ttf
         - asset: assets/fonts/Cairo-Bold.ttf
           weight: 700
-    - family: Amiri
-      fonts:
-        - asset: assets/fonts/Amiri-Regular.ttf
-        - asset: assets/fonts/Amiri-Bold.ttf
-          weight: 700
+  
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package

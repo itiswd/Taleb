@@ -57,15 +57,15 @@ class _PdfViewerScreenState extends State<PdfViewerScreen> {
           : localPath != null
           ? PDFView(
               filePath: localPath,
-              // إعدادات مريحة للقراءة
-              enableSwipe: true,
-              swipeHorizontal: true,
-              autoSpacing: false,
+
+              // 💡 التعديلات لفرض التمرير العمودي:
+              enableSwipe: true, // السماح بالسحب
+              swipeHorizontal: false, // ⬅️ تعطيل السحب الأفقي
+              autoSpacing: true,
               pageFling: true,
               pageSnap: true,
               defaultPage: 0,
-              fitEachPage: true, // مهم لعرض مريح
-              // ...
+              fitEachPage: true,
             )
           : const Center(child: Text('عذراً، لم يتم تحميل ملف PDF.')),
     );
