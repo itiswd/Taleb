@@ -2,6 +2,7 @@
 
 import 'dart:io';
 
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -20,7 +21,7 @@ Future<File> getFileFromAsset(String assetPath) async {
     await file.writeAsBytes(bytes, flush: true);
   } catch (e) {
     // معالجة الخطأ
-    print("Error copying asset to local storage: $e");
+    debugPrint("Error copying asset to local storage: $e");
     throw Exception("Could not load PDF asset.");
   }
 
