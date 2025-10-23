@@ -15,7 +15,7 @@ import '../models/study_plan.dart';
 class DbHelper {
   static Database? _database;
   static const String dbName = 'talib_ilm.db';
-  static const int dbVersion = 4; // 💡 تم تحديث الإصدار إلى 3
+  static const int dbVersion = 5;
 
   // أسماء الجداول
   static const String bookTable = 'books';
@@ -121,6 +121,7 @@ class DbHelper {
           'title': bookMap['title'],
           'author': bookMap['author'],
           'category': bookMap['category'] ?? 'عام',
+          'pdfPath': bookMap['pdfPath'], // ⬅️ إدخال المسار
         });
         debugPrint('تم إدخال الكتاب: ${bookMap['title']}');
 

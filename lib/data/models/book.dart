@@ -1,28 +1,38 @@
+// lib/data/models/book.dart
+
 class Book {
   final int id;
   final String title;
   final String author;
-  final String category; // مثل: فقه، عقيدة، حديث
+  final String category;
+  final String? pdfPath; // ⬅️ الحقل الجديد (اختياري)
 
   Book({
     required this.id,
     required this.title,
     required this.author,
     required this.category,
+    this.pdfPath, // ⬅️ إضافة الحقل في البناء
   });
 
-  // دالة لتحويل الكائن إلى Map (لإدخاله في قاعدة البيانات)
+  // تحديث toMap و fromMap
   Map<String, dynamic> toMap() {
-    return {'id': id, 'title': title, 'author': author, 'category': category};
+    return {
+      'id': id,
+      'title': title,
+      'author': author,
+      'category': category,
+      'pdfPath': pdfPath, // ⬅️ إضافة الحقل
+    };
   }
 
-  // دالة لإنشاء كائن من Map (لقراءته من قاعدة البيانات)
   factory Book.fromMap(Map<String, dynamic> map) {
     return Book(
       id: map['id'] as int,
       title: map['title'] as String,
       author: map['author'] as String,
       category: map['category'] as String,
+      pdfPath: map['pdfPath'] as String?, // ⬅️ إضافة الحقل
     );
   }
 }
