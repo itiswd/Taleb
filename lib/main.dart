@@ -30,7 +30,7 @@ class TalibAlmApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'مكتبة طالب العلم PDF',
+      title: 'طالب',
       debugShowCheckedModeBanner: false,
 
       localizationsDelegates: const [
