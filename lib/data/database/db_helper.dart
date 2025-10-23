@@ -15,7 +15,7 @@ import '../models/study_plan.dart';
 class DbHelper {
   static Database? _database;
   static const String dbName = 'talib_ilm.db';
-  static const int dbVersion = 3; // 💡 تم تحديث الإصدار إلى 3
+  static const int dbVersion = 4; // 💡 تم تحديث الإصدار إلى 3
 
   // أسماء الجداول
   static const String bookTable = 'books';
