@@ -28,7 +28,7 @@ class PlanProvider with ChangeNotifier {
   }
 
   Future<List<PlanItem>> getItemsForPlan(int planId) async {
-    return await _dbHelper.getPlanItemsForPlan(planId);
+    return await _dbHelper.getItemsForPlan(planId);
   }
 
   // تحديث حالة إنجاز بند
