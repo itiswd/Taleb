@@ -170,4 +170,33 @@ class DbHelper {
       whereArgs: [planItemId],
     );
   }
+
+  // دالة البحث الشامل (البحث عن كلمة داخل عناوين الفصول ومحتوياتها)
+  Future<List<Chapter>> searchChapters(String query) async {
+    final db = await database;
+
+    // تأمين الاستعلام SQL لتجنب حقن SQL (SQL Injection)
+    final safeQuery = '%$query%';
+
+    // الاستعلام: يبحث عن النص في عمود title أو عمود content في جدول chapters
+    final List<Map<String, dynamic>> maps = await db.query(
+      chapterTable,
+      where: 'title LIKE ? OR content LIKE ?',
+      whereArgs: [safeQuery, safeQuery],
+      orderBy: 'bookId ASC, id ASC', // الترتيب حسب الكتاب ثم الفصل
+    );
+
+    return List.generate(maps.length, (i) => Chapter.fromMap(maps[i]));
+  }
+
+  // دالة لجلب الكتب حسب التصنيف
+  Future<List<Book>> getBooksByCategory(String category) async {
+    final db = await database;
+    final List<Map<String, dynamic>> maps = await db.query(
+      bookTable,
+      where: 'category = ?',
+      whereArgs: [category],
+    );
+    return List.generate(maps.length, (i) => Book.fromMap(maps[i]));
+  }
 }

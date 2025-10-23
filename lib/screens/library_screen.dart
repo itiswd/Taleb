@@ -2,6 +2,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:taleb/screens/category_books_screen.dart';
+import 'package:taleb/screens/search_delegate.dart';
 
 import '../providers/book_provider.dart';
 import 'book_details_screen.dart';
@@ -15,7 +17,26 @@ class LibraryScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('المكتبة والمصنفات'),
         centerTitle: true,
-        // يمكن إضافة زر البحث والتصنيف هنا
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.search),
+            onPressed: () {
+              showSearch(
+                context: context,
+                delegate:
+                    ChapterSearchDelegate(), // استخدام الديليجيت الذي أنشأناه
+              );
+            },
+          ),
+          // زر المصنفات
+          IconButton(
+            icon: const Icon(Icons.folder_open),
+            onPressed: () {
+              // هنا سنفتح نافذة المصنفات (الخطوة القادمة)
+              _showCategoriesSheet(context);
+            },
+          ),
+        ],
       ),
       body: Consumer<BookProvider>(
         builder: (context, bookProvider, child) {
@@ -56,6 +77,63 @@ class LibraryScreen extends StatelessWidget {
           );
         },
       ),
+    );
+  }
+
+  void _showCategoriesSheet(BuildContext context) {
+    final bookProvider = Provider.of<BookProvider>(context, listen: false);
+
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return FutureBuilder<List<String>>(
+          future: bookProvider.getUniqueCategories(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+
+            final categories = snapshot.data ?? [];
+
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: Text(
+                    'اختر مصنفاً',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                ),
+                // عرض المصنفات كقائمة
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: categories.length,
+                    itemBuilder: (context, index) {
+                      final category = categories[index];
+                      return ListTile(
+                        leading: const Icon(Icons.category, color: Colors.teal),
+                        title: Text(category),
+                        onTap: () {
+                          Navigator.pop(context); // إغلاق النافذة
+                          // الانتقال إلى شاشة عرض كتب المصنف المحدد
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  CategoryBooksScreen(category: category),
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      },
     );
   }
 }
