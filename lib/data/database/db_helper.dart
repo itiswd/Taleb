@@ -1,5 +1,7 @@
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:taleb/data/models/plan_item.dart';
+import 'package:taleb/data/models/study_plan.dart';
 
 import '../models/book.dart';
 import '../models/chapter.dart';
@@ -12,7 +14,9 @@ class DbHelper {
   // أسماء الجداول
   static const String bookTable = 'books';
   static const String chapterTable = 'chapters';
-
+  // الجداول الجديدة
+  static const String planTable = 'study_plans';
+  static const String planItemTable = 'plan_items';
   // دالة للحصول على نسخة من قاعدة البيانات
   Future<Database> get database async {
     if (_database != null) return _database!;
@@ -31,58 +35,65 @@ class DbHelper {
 
   // دالة لإنشاء الجداول عند أول تشغيل
   Future<void> _onCreate(Database db, int version) async {
-    // 1. جدول الكتب (books)
+    // ... (جداول الكتب والفصول كما هي) ...
+
+    // 3. جدول الخطط (study_plans)
     await db.execute('''
-      CREATE TABLE $bookTable (
+      CREATE TABLE $planTable (
         id INTEGER PRIMARY KEY,
-        title TEXT,
-        author TEXT,
+        name TEXT,
+        description TEXT,
         category TEXT
       )
     ''');
 
-    // 2. جدول الفصول (chapters)
+    // 4. جدول عناصر الخطة (plan_items)
     await db.execute('''
-      CREATE TABLE $chapterTable (
+      CREATE TABLE $planItemTable (
         id INTEGER PRIMARY KEY,
-        bookId INTEGER,
-        title TEXT,
-        content TEXT,
-        FOREIGN KEY (bookId) REFERENCES $bookTable (id)
+        planId INTEGER,
+        chapterId INTEGER,
+        chapterTitle TEXT, 
+        bookTitle TEXT,
+        isCompleted INTEGER, 
+        FOREIGN KEY (planId) REFERENCES $planTable (id)
       )
     ''');
 
-    // **ملاحظة:** هنا يمكنك إضافة بيانات الكتب الافتراضية
     await _insertInitialData(db);
   }
 
   // دالة لإدخال بيانات الكتب والفصول (للتجربة)
   Future<void> _insertInitialData(Database db) async {
-    // إدخال كتاب تجريبي
-    final testBook = Book(
+    // ... (إدخال الكتاب والفصول كما هو) ...
+
+    // إدخال خطة تجريبية (الخطة ID: 1)
+    final testPlan = StudyPlan(
       id: 1,
-      title: 'الرسالة التوحيدية',
-      author: 'أحمد',
+      name: 'متن التوحيد للمبتدئين',
+      description: 'دراسة مبسطة في العقيدة',
       category: 'عقيدة',
     );
-    await db.insert(bookTable, testBook.toMap());
+    await db.insert(planTable, testPlan.toMap());
 
-    // إدخال فصول تجريبية
-    final chapter1 = Chapter(
+    // ربط فصول الكتاب التجريبي (ID: 1) بالخطة
+    final planItem1 = PlanItem(
       id: 1,
-      bookId: 1,
-      title: 'مقدمة في التوحيد',
-      content: 'نص الفصل الأول الطويل هنا...',
+      planId: 1,
+      chapterId: 1,
+      chapterTitle: 'مقدمة في التوحيد',
+      bookTitle: 'الرسالة التوحيدية',
     );
-    final chapter2 = Chapter(
+    final planItem2 = PlanItem(
       id: 2,
-      bookId: 1,
-      title: 'تعريف العقيدة',
-      content: 'نص الفصل الثاني الأطول هنا...',
+      planId: 1,
+      chapterId: 2,
+      chapterTitle: 'تعريف العقيدة',
+      bookTitle: 'الرسالة التوحيدية',
     );
 
-    await db.insert(chapterTable, chapter1.toMap());
-    await db.insert(chapterTable, chapter2.toMap());
+    await db.insert(planItemTable, planItem1.toMap());
+    await db.insert(planItemTable, planItem2.toMap());
   }
 
   // ---------------------------------------------
@@ -111,4 +122,52 @@ class DbHelper {
   }
 
   // ---------------------------------------------
+  // جلب جميع الخطط
+  Future<List<StudyPlan>> getAllStudyPlans() async {
+    final db = await database;
+    final List<Map<String, dynamic>> maps = await db.query(planTable);
+    return List.generate(maps.length, (i) => StudyPlan.fromMap(maps[i]));
+  }
+
+  // جلب عناصر خطة معينة
+  Future<List<PlanItem>> getPlanItemsForPlan(int planId) async {
+    final db = await database;
+    final List<Map<String, dynamic>> maps = await db.query(
+      planItemTable,
+      where: 'planId = ?',
+      whereArgs: [planId],
+      orderBy: 'id ASC',
+    );
+    return List.generate(maps.length, (i) => PlanItem.fromMap(maps[i]));
+  }
+
+  // دالة لحفظ/إنشاء خطة جديدة
+  Future<int> insertStudyPlan(StudyPlan plan) async {
+    final db = await database;
+    return await db.insert(planTable, plan.toMap());
+  }
+
+  // دالة لحفظ عناصر خطة
+  Future<void> insertPlanItem(PlanItem item) async {
+    final db = await database;
+    await db.insert(
+      planItemTable,
+      item.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+
+  // دالة لتحديث حالة إنجاز بند معين في الخطة
+  Future<void> updatePlanItemCompletion(
+    int planItemId,
+    bool isCompleted,
+  ) async {
+    final db = await database;
+    await db.update(
+      planItemTable,
+      {'isCompleted': isCompleted ? 1 : 0},
+      where: 'id = ?',
+      whereArgs: [planItemId],
+    );
+  }
 }
