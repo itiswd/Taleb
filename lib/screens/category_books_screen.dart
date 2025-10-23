@@ -1,9 +1,11 @@
+// lib/screens/category_books_screen.dart
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../data/models/book.dart';
 import '../providers/book_provider.dart';
-import 'book_details_screen.dart';
+import 'pdf_viewer_screen.dart';
 
 class CategoryBooksScreen extends StatelessWidget {
   final String category;
@@ -17,7 +19,6 @@ class CategoryBooksScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: Text('مصنف: $category'), centerTitle: true),
       body: FutureBuilder<List<Book>>(
-        // جلب الكتب المفلترة
         future: bookProvider.filterBooksByCategory(category),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -38,7 +39,7 @@ class CategoryBooksScreen extends StatelessWidget {
                 elevation: 2,
                 margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
                 child: ListTile(
-                  leading: const Icon(Icons.book, color: Colors.teal),
+                  leading: const Icon(Icons.picture_as_pdf, color: Colors.red),
                   title: Text(
                     book.title,
                     style: const TextStyle(fontWeight: FontWeight.bold),
@@ -46,11 +47,14 @@ class CategoryBooksScreen extends StatelessWidget {
                   subtitle: Text('المؤلف: ${book.author}'),
                   trailing: const Icon(Icons.arrow_forward_ios),
                   onTap: () {
-                    // الانتقال لصفحة تفاصيل الكتاب
+                    // الانتقال مباشرة لعارض PDF
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => BookDetailsScreen(book: book),
+                        builder: (context) => PdfViewerScreen(
+                          assetPath: book.pdfPath,
+                          title: book.title,
+                        ),
                       ),
                     );
                   },

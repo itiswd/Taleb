@@ -5,24 +5,23 @@ class Book {
   final String title;
   final String author;
   final String category;
-  final String? pdfPath; // ⬅️ الحقل الجديد (اختياري)
+  final String pdfPath; // مسار الـ PDF داخل مجلد assets
 
   Book({
     required this.id,
     required this.title,
     required this.author,
     required this.category,
-    this.pdfPath, // ⬅️ إضافة الحقل في البناء
+    required this.pdfPath,
   });
 
-  // تحديث toMap و fromMap
   Map<String, dynamic> toMap() {
     return {
       'id': id,
       'title': title,
       'author': author,
       'category': category,
-      'pdfPath': pdfPath, // ⬅️ إضافة الحقل
+      'pdfPath': pdfPath,
     };
   }
 
@@ -32,7 +31,7 @@ class Book {
       title: map['title'] as String,
       author: map['author'] as String,
       category: map['category'] as String,
-      pdfPath: map['pdfPath'] as String?, // ⬅️ إضافة الحقل
+      pdfPath: map['pdfPath'] as String,
     );
   }
 }
